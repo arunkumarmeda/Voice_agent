@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Voice AI Console</title>
+  <style>
+    *{box-sizing:border-box} body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:radial-gradient(circle at 70% 10%,#352057 0,#100d20 34%,#06151c 70%);color:#f8fafc;min-height:100vh} .wrap{max-width:1250px;margin:auto;padding:28px} .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:54px}.brand{display:flex;gap:16px;align-items:center;font-size:28px;font-weight:800}.logo{width:58px;height:58px;border-radius:18px;background:linear-gradient(135deg,#7c3aed,#06b6d4);display:grid;place-items:center;box-shadow:0 0 25px #7c3aed88}.hero{text-align:center}.hero h1{margin:0;font-size:42px}.hero p{color:#94a3b8;font-size:18px}.clock{text-align:right;color:#22d3ee;font-weight:800;font-size:28px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:28px}.card{background:rgba(21,18,38,.78);border:1px solid rgba(148,163,184,.15);border-radius:24px;padding:28px;box-shadow:0 22px 70px rgba(0,0,0,.35)}h2{margin-top:0}.line{height:1px;background:rgba(148,163,184,.16);margin:18px 0 26px}.row{display:grid;grid-template-columns:2fr 1fr;gap:18px}.field{margin-bottom:20px}label{display:block;color:#94a3b8;font-weight:700;margin-bottom:10px}input,select,textarea{width:100%;background:rgba(30,41,59,.55);border:1px solid rgba(148,163,184,.16);border-radius:14px;color:#fff;padding:16px;font-size:17px;outline:none}input:focus,textarea:focus,select:focus{border-color:#8b5cf6;box-shadow:0 0 0 3px #8b5cf633}.phonebox{display:flex;align-items:center;background:rgba(30,41,59,.55);border:1px solid #8b5cf6;border-radius:14px;overflow:hidden}.prefix{padding:0 16px;font-weight:800}.phonebox input{border:0;background:transparent}.btn{width:100%;border:0;border-radius:16px;padding:18px 22px;background:linear-gradient(90deg,#7c3aed,#06b6d4);color:white;font-size:20px;font-weight:900;cursor:pointer}.btn:disabled{opacity:.65;cursor:not-allowed}.monitor{min-height:455px}.status{display:flex;justify-content:space-between;align-items:center}.pill{border:1px solid rgba(148,163,184,.18);padding:9px 16px;border-radius:10px;font-weight:800}.summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;background:rgba(30,41,59,.38);border:1px solid rgba(148,163,184,.14);padding:18px;border-radius:16px;margin-bottom:24px}.k{color:#64748b;font-size:13px}.v{font-weight:800;overflow-wrap:anywhere}.cyan{color:#06b6d4}.terminal{background:#030409;border-radius:16px;overflow:hidden;border:1px solid #111827}.bar{padding:14px 18px;background:#090a10;color:#94a3b8}.dot{display:inline-block;width:13px;height:13px;border-radius:50%;margin-right:8px}.red{background:#ef4444}.yellow{background:#f59e0b}.green{background:#10b981}pre{margin:0;padding:22px;color:#94a3b8;min-height:245px;max-height:360px;overflow:auto;white-space:pre-wrap}.err{color:#ef4444}.ok{color:#22c55e}.warn{color:#f59e0b}.agent{color:#38bdf8}.user{color:#f9fafb}.logs{margin-top:28px}.table{width:100%;border-collapse:collapse;background:rgba(15,23,42,.35);border-radius:16px;overflow:hidden}th,td{padding:16px;text-align:left;border-bottom:1px solid rgba(148,163,184,.12)}th{color:#94a3b8}td{font-weight:700}.clear{float:right;background:transparent;color:#ef4444;border:1px solid #7f1d1d;border-radius:12px;padding:10px 18px;font-weight:800;cursor:pointer}@media(max-width:900px){.grid,.row{grid-template-columns:1fr}.top{display:block}.clock{text-align:left;margin-top:20px}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand"><div class="logo">🎙️</div><span>Voice AI</span></div>
+      <div class="hero"><h1>Voice Agent Console</h1><p>Trigger automated AI telephone calls with natural speech.</p></div>
+      <div class="clock"><div id="clock">--:--:--</div><small>IN Standard Time</small></div>
+    </div>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Call Dispatcher</h2><div class="line"></div>
+        <div class="field"><label>Recipient Number (India Default)</label><div class="phonebox"><span class="prefix">IN +91</span><input id="number" placeholder="9876543210" /></div><small style="color:#64748b">Enter 10 digits. App will send +91XXXXXXXXXX.</small></div>
+        <div class="field"><label>Voice</label><input value="Custom Voice" disabled /></div>
+        <div class="field"><label>First Sentence (Greeting)</label><textarea id="first" rows="3">Hello, this is Arun from UnisLink. I'm calling to verify the eligibility and active status of a patient's insurance coverage.
+</textarea></div>
+        <button id="callBtn" class="btn">📞 Dispatch AI Agent Call</button>
+      </section>
+
+      <section class="card monitor">
+        <div class="status"><h2>Call Live Monitor</h2><span class="pill" id="callStatus">READY</span></div><div class="line"></div>
+        <div class="summary"><div><div class="k">CALL ID</div><div class="v cyan" id="callId">-</div></div><div><div class="k">RECIPIENT</div><div class="v" id="recipient">-</div></div><div><div class="k">DURATION</div><div class="v" id="duration">-</div></div></div>
+        <div class="terminal"><div class="bar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span> live_conversation_stream.log</div><pre id="terminal">Ready to initiate connection to Bland AI dispatcher...</pre></div>
+      </section>
+    </div>
+
+    <section class="card logs"><h2>Call Logs & Analytics <button class="clear" onclick="clearLogs()">Clear Logs</button></h2><div class="line"></div><table class="table"><thead><tr><th>Date/Time</th><th>Call ID</th><th>Number</th><th>Duration</th><th>Status</th></tr></thead><tbody id="logsBody"></tbody></table></section>
+  </div>
+<script>
+const $ = id => document.getElementById(id);
+let pollTimer = null;
+let lastTranscriptText = '';
+const finalStatuses = ['COMPLETED','NO ANSWER','BUSY','FAILED','REJECTED','CANCELLED','CANCELED'];
+
+setInterval(()=>{$('clock').textContent = new Date().toLocaleTimeString('en-IN',{timeZone:'Asia/Kolkata',hour12:false})},1000);
+function append(msg, cls=''){
+  $('terminal').innerHTML += `\n<span class="${cls}">${escapeHtml(msg)}</span>`;
+  $('terminal').scrollTop = $('terminal').scrollHeight;
+}
+function setTerminal(msg){ $('terminal').innerHTML = escapeHtml(msg); }
+function escapeHtml(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function formatNumber(raw){ const digits = raw.replace(/\D/g,''); return digits.startsWith('91') && digits.length === 12 ? `+${digits}` : `+91${digits}`; }
+function friendlyStatus(status){
+  if(status === 'NO ANSWER') return 'CALL NOT ANSWERED';
+  if(status === 'REJECTED') return 'CALL REJECTED';
+  if(status === 'BUSY') return 'CALL BUSY';
+  return status || 'UNKNOWN';
+}
+async function loadLogs(){
+  const res = await fetch('/api/logs'); const data = await res.json();
+  $('logsBody').innerHTML = data.logs.map(l=>`<tr><td>${l.created_at}</td><td class="cyan">${l.call_id}</td><td>${l.number}</td><td>${l.duration || '-'}</td><td>${friendlyStatus(l.status)}</td></tr>`).join('') || '<tr><td colspan="5">No logs yet</td></tr>';
+}
+async function clearLogs(){ await fetch('/api/logs',{method:'DELETE'}); loadLogs(); }
+function renderTranscript(lines){
+  if(!Array.isArray(lines) || lines.length === 0) return '';
+  return lines.map(x => {
+    const speaker = (x.speaker || 'speaker').toString();
+    const text = (x.text || '').toString();
+    return `${speaker}: ${text}`;
+  }).join('\n');
+}
+async function pollCall(callId){
+  try{
+    const res = await fetch(`/api/call/${encodeURIComponent(callId)}/live`);
+    const data = await res.json();
+    if(!res.ok) throw new Error(typeof data.detail === 'string' ? data.detail : JSON.stringify(data.detail));
+
+    const status = friendlyStatus(data.status);
+    $('callStatus').textContent = status;
+    $('duration').textContent = data.duration || '-';
+
+    const transcriptText = renderTranscript(data.transcript);
+    if(transcriptText && transcriptText !== lastTranscriptText){
+      lastTranscriptText = transcriptText;
+      setTerminal(`Status: ${status}\n\n${transcriptText}`);
+    } else if(!transcriptText){
+      setTerminal(`Status: ${status}\n\nWaiting for live transcript from Bland AI...`);
+    }
+
+    if(finalStatuses.includes(data.status)){
+      clearInterval(pollTimer); pollTimer = null;
+      if(data.status === 'COMPLETED') append('\nCall completed.', 'ok');
+      else if(data.status === 'NO ANSWER') append('\nPerson did not answer the call.', 'warn');
+      else if(data.status === 'REJECTED') append('\nPerson rejected / declined the call.', 'warn');
+      else if(data.status === 'BUSY') append('\nNumber is busy.', 'warn');
+      else append('\nCall ended with status: ' + data.status, 'err');
+      loadLogs();
+    }
+  }catch(e){
+    append('Live status fetch error: ' + e.message, 'err');
+  }
+}
+
+$('callBtn').addEventListener('click', async()=>{
+  if(pollTimer){ clearInterval(pollTimer); pollTimer = null; }
+  lastTranscriptText = '';
+  setTerminal('Initiating connection to Bland AI dispatcher...'); $('callBtn').disabled = true; $('callStatus').textContent='CALLING'; $('duration').textContent='-';
+  const phone_number = formatNumber($('number').value);
+  $('recipient').textContent = phone_number;
+  try{
+    const res = await fetch('/api/call',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone_number, first_sentence:$('first').value})});
+    const text = await res.text();
+    let data;
+    try { data = JSON.parse(text); }
+    catch { throw new Error(text || 'Server returned non-JSON error'); }
+    if(!res.ok) throw new Error(typeof data.detail === 'string' ? data.detail : JSON.stringify(data.detail));
+    $('callId').textContent = data.call.call_id; $('callStatus').textContent=friendlyStatus(data.call.status || 'QUEUED'); append('Call initiated successfully.', 'ok'); loadLogs();
+    pollCall(data.call.call_id);
+    pollTimer = setInterval(()=>pollCall(data.call.call_id), 3000);
+  }catch(e){ $('callStatus').textContent='ERROR'; append('Error initiating call: ' + e.message, 'err'); }
+  $('callBtn').disabled = false;
+});
+loadLogs();
+</script>
+</body>
+</html>
