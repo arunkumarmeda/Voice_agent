@@ -20,6 +20,7 @@ Create `.env`:
 BLAND_API_KEY=your_bland_api_key_here
 BLAND_BASE_URL=https://api.bland.ai
 CUSTOM_VOICE_ID=13a1a524-4515-4f96-a57a-aa142697972e
+PYTHON_VERSION=3.11.9
 ```
 
 
